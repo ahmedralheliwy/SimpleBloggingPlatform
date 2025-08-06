@@ -1,0 +1,39 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document- edit</title>
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    {% load static %}
+    <link rel="icon" type="image/png" href="{% static 'favicon.png' %}">
+</head>
+<body class="container mt-3">
+    <!-- Edit POST -->
+    <div class="row justify-content-center mb-3">
+       <div class="card border-0 shadow-sm col-10 m-1">
+            <div class="card-header bg-primary text-white ">
+                <h3 class="text-center">Edit Post</h3>
+            </div>
+            <div class="card-body">
+            <form action="{% url 'edit_post' post.id %}" method="POST" enctype="multipart/form-data"> 
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="mb-3 row">
+                        <label for="{{ field.id_for_label }}" class="form-label col-1">{{ field.label }}</label>
+                        <div class="col-6">
+                            {{ field }}
+                        </div>
+                    </div>
+                {% endfor %}
+                <div class="d-grad mt-3">
+                    <input type="submit" value="Update" class="btn btn-success">
+                </div>
+            </form>
+            <div>
+            </div>
+       </div> 
+    </div>
+</body>
+</html>

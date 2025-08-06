@@ -1,0 +1,87 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    {% load static %}
+    <link rel="icon" type="image/png" href="{% static 'favicon.png' %}">
+    <script src="https://unpkg.com/htmx.org@1.9.6"></script>
+    {% csrf_token %}
+    <meta name="csrf-token" content="{{ csrf_token }}">
+
+
+</head>
+<body class="container mt-3">
+    <!-- ADD POST -->
+    <div class="row justify-content-center mb-3">
+       <div class="card border-0 shadow-sm col-10 m-1">
+            <div class="card-header bg-primary text-white ">
+                <h3 class="text-center">Add Post</h3>
+            </div>
+            <div class="card-body">
+            <form action="{% url 'index' %}" method="POST" enctype="multipart/form-data"> 
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="mb-3 row">
+                        <label for="{{ field.id_for_label }}" class="form-label col-1">{{ field.label }}</label>
+                        <div class="col-6">
+                            {{ field }}
+                        </div>
+                    </div>
+                {% endfor %}
+                <div class="d-grad mt-3">
+                    <input type="submit" value="Submit" class="btn btn-success">
+                </div>
+            </form>
+            <div>
+            </div>
+       </div> 
+    </div>
+
+    <!-- OUR POSTS -->
+    <div class="container">
+        <div class="row">
+            <div class="col-10">
+                <h2 class="text-center mt-3">Posts</h2>
+                <div class="row">
+                    {% for post in posts %}
+                    <div class="col-4 mb-3" id="post-{{ post.id }}">
+                        <div class="card">
+                            <div class="card-img">
+                                {% if post.image %}
+                                    <img src="{{ post.image.url }}" class="card-img-top img-fluid" style="max-width: 400px; max-height: 200px; object-fit: cover;" alt="{{ post.title }}">
+                                {% else %}
+                                    <img src="{% static 'default.jpg' %}" class="card-img-top img-fluid" style="max-width: 400px; max-height: 200px; object-fit: cover;" alt="Default Image">
+                                {% endif %}
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">{{ post.title }} <a href="{% url 'edit_post' post.id %}"><img src="{% static 'edit.png' %}" alt="edit" style="max-width: 20px;max-height: 20px;" /></a>
+                                <img hx-delete="{% url 'delete_post' post.id %}" hx-target='#post-{{ post.id }}' hx-swap="outerHTML" src="{% static 'recycle-bin.png' %}" alt="delete"
+                                 style="max-width: 20px;max-height: 20px;" /></h5>
+                                <p class="card-text">{{ post.short_description }}</p>
+                                <p class="card-text"><small class="text-muted">Posted on {{ post.created_at }}</small></p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+document.body.addEventListener('htmx:configRequest', (event) => {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+    event.detail.headers['X-CSRFToken'] = csrfToken;
+});
+</script>
+
+    
+</body>
+
+
+
+
+
